@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@asigloo/vue-dynamic-forms": "^3.18.1",
+    "@formkit/vue": "^1.0.0-beta.14",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6"
   },

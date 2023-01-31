@@ -1,10 +1,15 @@
 <script setup lang="ts">
+import { useRoute } from 'vue-router'
 import DynamicSSOForm from '../components/DynamicSSOForm.vue'
+
+const route = useRoute()
+const code = route.params.code as string
+
 </script>
 
 <template>
   <div class="about">
-    <DynamicSSOForm :msg="'testing'" />
+    <DynamicSSOForm :code="code" />
   </div>
 </template>
 
