@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
@@ -10,7 +9,10 @@ import HelloWorld from './components/HelloWorld.vue'
     <div class="wrapper">
       <nav>
         <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/integration/azure">Azure</RouterLink>
+        <RouterLink to="/integration/azure" :key="'azure'">Azure</RouterLink>
+        <RouterLink to="/integration/anypoint" :key="'anypoint'">AnyPoint</RouterLink>
+        <RouterLink to="/integration/dotnet_auth0" :key="'dotnet_auth0'">ASP.NET Auth0</RouterLink>
+
       </nav>
     </div>
   </header>

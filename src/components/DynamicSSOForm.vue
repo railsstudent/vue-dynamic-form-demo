@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { TextField, RadioField, Validator, required, url } from '@asigloo/vue-dynamic-forms'
-import { FormKitSchema } from '@formkit/vue'
+import { reset } from '@formkit/core';
+import { FormKitSchema } from '@formkit/vue';
+import { ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 const props = defineProps({
   code: { 
@@ -12,99 +13,16 @@ const props = defineProps({
 
 console.log(props.code)
 
-const mulesoftForm = computed(() => ({
-  id: 'mulesoft-sso-form',
-  fields: {
-    name: TextField({
-      label: 'Name',
-      validations: [
-        Validator({
-          validator: required,
-          text: 'This field is required'
-        })
-      ]
-    }),
-    url: TextField({
-      label: 'Assertion Consumer Services (ACS) URL',
-      validations: [
-        Validator({
-          validator: required,
-          text: 'This field is required'
-        }),
-        Validator({
-          validator: url,
-          text: 'URL is expected'
-        })
-      ]
-    }),
-    audience: TextField({
-      label: 'Audience',
-      validations: [
-        Validator({
-          validator: required,
-          text: 'Audience is required'
-        })
-      ]
-    })
-  }
-}))
-
-const aspSSOForm = computed(() => ({
-  id: 'asp-sso-form',
-  fields: {
-    name: TextField({
-      label: 'Name',
-      validations: [
-        Validator({
-          validator: required,
-          text: 'This field is required'
-        })
-      ]
-    }),
-    audience: TextField({
-      label: 'Audience',
-      validations: [
-        Validator({
-          validator: required,
-          text: 'Audience is required'
-        })
-      ]
-    }),
-    recipient: TextField({
-      label: 'Recipient',
-      validations: [
-        Validator({
-          validator: required,
-          text: 'This field is required'
-        })
-      ]
-    }),
-    signResponse: RadioField({
-      label: 'Sign Response',
-      options: [
-        {
-          key: 'yes',
-          value: 'Yes',
-        },
-        {
-          key: 'no',
-          value: 'No',
-        },
-      ],
-      value: 'yes',
-    }),
-  }
-}))
-
 const azureData = [
   {
     $el: 'h1',
-    children: 'Azure DB Single Sign On Integration'
+    children: 'New AD RMS SSO Integration'
   },
   {
     $formkit: 'text',
     name: 'name',
     label: 'Name',
+    placeholder: 'AD RMS',
     validation: 'required'
   },
   {
@@ -116,29 +34,115 @@ const azureData = [
     validation: 'required|url'
   }
 ]
+
+const muleSoftData = [
+  {
+    $el: 'h1',
+    children: 'New AnyPoint SSO Integration'
+  },
+  {
+    $formkit: 'text',
+    name: 'name',
+    label: 'Name',
+    placeholder: 'AnyPoint',
+    validation: 'required'
+  },
+  {
+    $formkit: 'url',
+    name: 'url',
+    label: 'Assertion Consumer Service (ACS) URL',
+    placeholder: 'Your ACS URL',
+    help: 'This is the URL of your Right Management Server. It can be internal or external, but users have to be able to reach it',
+    validation: 'required|url'
+  },
+  {
+    $formkit: 'text',
+    name: 'audience',
+    label: 'Audience',
+    placeholder: 'Your audience',
+    validation: 'required|length:3',
+  }
+]
+
+const dotNetAuth0Data = [
+  {
+    $el: 'h1',
+    children: 'New ASP.NET Auth0 SSO Integration'
+  },
+  {
+    $formkit: 'text',
+    name: 'name',
+    label: 'Name',
+    placeholder: 'AnyPoint',
+    validation: 'required'
+  },
+  {
+    $formkit: 'text',
+    name: 'audience',
+    label: 'Audience',
+    placeholder: 'Your audience',
+    validation: 'required|length:3,20',
+    help: 'Between 3 and 20 characters'
+  },
+  {
+    $formkit: 'text',
+    name: 'recipient',
+    label: 'Recipient',
+    placeholder: 'Your recipient',
+    validation: 'required',
+  },
+  {
+    $formkit: 'radio',
+    name: 'signResponse',
+    label: 'Sign Response',
+    options: {
+      'yes': 'Yes',
+      'no': 'No',
+    },
+    value: 'no',
+    validation: 'required'
+  }
+]
+
 const formSchema = ref([])
 
-async function mounted() { 
+async function loadFormConfiguration(code: string) {
   formSchema.value = await new Promise<any>((resolve) => { setTimeout(() => { 
-    if (props.code === 'azure') {
+    if (code === 'azure') {
       return resolve(azureData)
+    } else if (code === 'anypoint') {
+      return resolve(muleSoftData)
+    } else if (code === 'dotnet_auth0') {
+      return resolve(dotNetAuth0Data)
     }
     resolve([])
   }, 100) })
-  console.log('mounted: hello world')
 }
 
-function save(data: any) {
+const route = useRoute()
+
+function created() {
+  watch(() => route.params, (toParams) => {
+    loadFormConfiguration(toParams.code as string)
+  })
+  loadFormConfiguration(props.code)
+  console.log('created: hello world')
+}
+
+async function save(data: any) {
   console.log('data', data)
+  await new Promise<boolean>((resolve) => setTimeout(() => resolve(true), 1000))
+  reset('ssoForm')
+  alert(JSON.stringify(data))
 }
 
-mounted();
+created()
 
 </script>
 
 <template>
   <div class="greetings">
-    <FormKit type="form" submit-label="Save" @submit="save">
+    <FormKit type="form" id="ssoForm" submit-label="Save" @submit="save">
       <FormKitSchema :schema="formSchema" />
     </FormKit>
   </div>

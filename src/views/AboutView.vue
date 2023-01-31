@@ -5,6 +5,8 @@ import DynamicSSOForm from '../components/DynamicSSOForm.vue'
 const route = useRoute()
 const code = route.params.code as string
 
+console.log('about view ->', code)
+
 </script>
 
 <template>
