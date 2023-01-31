@@ -73,7 +73,7 @@ const dotNetAuth0Data = [
     $formkit: 'text',
     name: 'name',
     label: 'Name',
-    placeholder: 'AnyPoint',
+    placeholder: 'ASP.NET Auth0 Name',
     validation: 'required'
   },
   {
