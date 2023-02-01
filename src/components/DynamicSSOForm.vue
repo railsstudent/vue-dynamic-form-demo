@@ -121,10 +121,15 @@ async function loadFormConfiguration(code: string) {
 
 const route = useRoute()
 
+watch(() => route.params.code, (code) => {
+  if (typeof code === 'string') {
+    loadFormConfiguration(code)
+  } else if (code.length) {
+    loadFormConfiguration(code[0])
+  }
+})
+
 function created() {
-  watch(() => route.params, (toParams) => {
-    loadFormConfiguration(toParams.code as string)
-  })
   loadFormConfiguration(props.code)
   console.log('created: hello world')
 }

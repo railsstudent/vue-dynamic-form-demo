@@ -3,7 +3,19 @@ import { useRoute } from 'vue-router'
 import DynamicSSOForm from '../components/DynamicSSOForm.vue'
 
 const route = useRoute()
-const code = route.params.code as string
+const code = extractCode()
+
+function extractCode() {
+  if (route.params.code) {
+    const code = route.params.code
+    if (typeof code === 'string') {
+      return code
+    } else if (code.length) {
+      return code[0]
+    }
+  }
+  return 'azure'
+}
 
 console.log('about view ->', code)
 
